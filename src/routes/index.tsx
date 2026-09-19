@@ -134,6 +134,7 @@ function PdfUtility() {
     setFiles((current) => {
       const next = [...current];
       const [moved] = next.splice(from, 1);
+      if (!moved) return current;
       next.splice(to, 0, moved);
       return next;
     });
@@ -295,7 +296,8 @@ function TrustStat({ value, label }: { value: string; label: string }) {
 }
 
 function downloadPdf(bytes: Uint8Array, filename: string) {
-  const url = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+  const safeBytes = new Uint8Array(bytes);
+  const url = URL.createObjectURL(new Blob([safeBytes.buffer], { type: "application/pdf" }));
   const link = document.createElement("a");
   link.href = url;
   link.download = filename;
